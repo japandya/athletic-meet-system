@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Sample Meet Report</title>
+    <link rel="stylesheet" href="/sample-report.css">
+  </head>
+  <body>
+    <main class="report-book">
+      <header class="report-cover">
+        <p>Reference Report</p>
+        <h1 id="meetName">Athletic Meet Report</h1>
+        <span id="meetMeta">Venue - Date</span>
+        <div class="cover-actions">
+          <button onclick="window.print()">Print / Save PDF</button>
+          <a href="/">Back to App</a>
+        </div>
+      </header>
+
+      <section class="summary-grid">
+        <article>
+          <span>Athletes</span>
+          <strong id="totalAthletes">0</strong>
+        </article>
+        <article>
+          <span>Events</span>
+          <strong id="totalEvents">0</strong>
+        </article>
+        <article>
+          <span>Entries</span>
+          <strong id="totalEntries">0</strong>
+        </article>
+        <article>
+          <span>Scored Events</span>
+          <strong id="totalScored">0</strong>
+        </article>
+      </section>
+
+      <section class="report-section">
+        <div class="section-title">
+          <div>
+            <p>Sample 1</p>
+            <h2>Team Championship Summary</h2>
+          </div>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Rank</th>
+              <th>Team / District</th>
+              <th>Points</th>
+              <th>Gold</th>
+              <th>Silver</th>
+              <th>Bronze</th>
+              <th>Athletes</th>
+            </tr>
+          </thead>
+          <tbody id="teamSummaryBody"></tbody>
+        </table>
+      </section>
+
+      <section class="report-section">
+        <div class="section-title">
+          <div>
+            <p>Sample 2</p>
+            <h2 id="scoreSheetTitle">Score Sheet</h2>
+          </div>
+          <span id="scoreSheetMeta">Reference score sheet format</span>
+        </div>
+        <div class="official-head">
+          <strong id="scoreMeetName">ATHLETICS SELECTION TRIAL</strong>
+          <b>RESULT SHEET</b>
+          <div>
+            <span id="scoreEventLine">EVENT: ____________</span>
+            <span id="scoreGenderLine">GENDER: Men / Women</span>
+          </div>
+          <em>Heat / Semi-Final / Final</em>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Sr. No.</th>
+              <th>Athlete</th>
+              <th>Faculty</th>
+              <th>Contact</th>
+              <th>Performance</th>
+            </tr>
+          </thead>
+          <tbody id="scoreSheetBody"></tbody>
+        </table>
+        <h3 class="final-title">FINAL RESULT</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Position</th>
+              <th>Name</th>
+              <th>Faculty</th>
+              <th>Performance</th>
+            </tr>
+          </thead>
+          <tbody id="scoreFinalBody"></tbody>
+        </table>
+        <div class="signature-row">
+          <span>Chief Referee</span>
+          <span>Chief Time Keeper</span>
+          <span>Chief Judge</span>
+        </div>
+      </section>
+
+      <section class="report-section">
+        <div class="section-title">
+          <div>
+            <p>Sample 3</p>
+            <h2 id="resultSheetTitle">Result Sheet</h2>
+          </div>
+          <span id="resultSheetMeta">Official result format</span>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Athlete</th>
+              <th>University</th>
+              <th>Mark</th>
+              <th>Medal</th>
+              <th>Pts</th>
+            </tr>
+          </thead>
+          <tbody id="resultSheetBody"></tbody>
+        </table>
+        <div class="match-report">
+          <h3>Match Report</h3>
+          <p><strong id="matchHeadline">Official Result</strong></p>
+          <p id="matchBody">Result narrative appears here.</p>
+        </div>
+      </section>
+
+      <section class="report-section">
+        <div class="section-title">
+          <div>
+            <p>Sample 4</p>
+            <h2>Participation Report</h2>
+          </div>
+          <span>First 25 athletes shown</span>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Bib / AFI UID</th>
+              <th>Athlete</th>
+              <th>Category</th>
+              <th>Gender</th>
+              <th>Team / District</th>
+              <th>Events</th>
+            </tr>
+          </thead>
+          <tbody id="participationBody"></tbody>
+        </table>
+      </section>
+    </main>
+
+    <script src="/sample-report.js"></script>
+  </body>
+</html>

@@ -1,0 +1,30 @@
+{
+  "name": "athletic-meet-system",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Production-ready athletic meet management monorepo.",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev -w @athletic-meet/api",
+    "dev:api": "npm run dev -w @athletic-meet/api",
+    "dev:web": "npm run dev -w @athletic-meet/web",
+    "start": "npm run start -w @athletic-meet/api",
+    "check": "npm run check -ws --if-present",
+    "test": "npm run test -ws --if-present"
+  },
+  "keywords": [
+    "athletics",
+    "meet",
+    "sports",
+    "manager",
+    "monorepo"
+  ],
+  "author": "",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  }
+}

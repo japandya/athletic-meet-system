@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Live Scoreboard</title>
+    <link rel="stylesheet" href="/scoreboard.css">
+  </head>
+  <body>
+    <main class="scoreboard">
+      <header class="score-header">
+        <div>
+          <p class="eyebrow">Live Scoreboard</p>
+          <h1 id="meetTitle">Athletic Meet</h1>
+          <span id="meetMeta">Venue - Date</span>
+        </div>
+        <div class="score-controls">
+          <label>
+            Event
+            <select id="scoreEventSelect"></select>
+          </label>
+          <a href="/" class="back-link">Manager</a>
+        </div>
+      </header>
+
+      <section class="hero-score">
+        <div>
+          <p id="eventCategory">Current event</p>
+          <h2 id="eventTitle">Select event</h2>
+        </div>
+        <div class="live-pill">
+          <span></span>
+          LIVE
+        </div>
+      </section>
+
+      <section class="score-grid">
+        <section class="score-panel main-results">
+          <div class="panel-head">
+            <h3>Event Result</h3>
+            <span id="lastUpdated">Updating...</span>
+          </div>
+          <div id="podium" class="podium"></div>
+          <table>
+            <thead>
+              <tr>
+                <th>Rank</th>
+                <th>Bib</th>
+                <th>Athlete</th>
+                <th>Team</th>
+                <th>Mark</th>
+                <th>Pts</th>
+              </tr>
+            </thead>
+            <tbody id="scoreRows"></tbody>
+          </table>
+        </section>
+
+        <aside class="score-panel team-panel">
+          <div class="panel-head">
+            <h3>Team Standings</h3>
+          </div>
+          <div id="teamStandings" class="team-standings"></div>
+        </aside>
+      </section>
+    </main>
+
+    <script src="/scoreboard.js"></script>
+  </body>
+</html>

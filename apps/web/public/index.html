@@ -1,0 +1,544 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Athletic Meet Manager</title>
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+          <div class="brand">
+            <div class="brand-mark">AM</div>
+            <div>
+              <strong>Athletic Meet</strong>
+              <span>Manager</span>
+            </div>
+          </div>
+          <div class="sidebar-card">
+            <span>Live desk</span>
+            <strong id="sidebarMeetName">Meet setup</strong>
+            <small id="sidebarMeetDate">Ready for entries</small>
+          </div>
+        <nav class="nav-tabs" aria-label="Main sections">
+          <button class="active" data-tab="dashboard">Dashboard</button>
+          <button data-tab="athletes">Athletes</button>
+          <button data-tab="events">Events</button>
+          <button data-tab="organizer">Organizer</button>
+          <button data-tab="entries">Entries</button>
+          <button data-tab="results">Results</button>
+          <button data-tab="reference">Reference CSV</button>
+          <button data-tab="reports">Reports</button>
+        </nav>
+      </aside>
+
+      <main class="main">
+        <header class="topbar">
+          <form id="meetForm" class="meet-form">
+            <label>
+              Meet
+              <input name="name" id="meetName" autocomplete="off">
+            </label>
+            <label>
+              Venue
+              <input name="venue" id="meetVenue" autocomplete="off">
+            </label>
+            <label>
+              Date
+              <input type="date" name="date" id="meetDate">
+            </label>
+            <button type="submit">Save Meet</button>
+          </form>
+          <button type="button" id="themeToggle" class="theme-toggle" aria-label="Toggle color theme">
+            Dark Mode
+          </button>
+        </header>
+
+        <section id="dashboard" class="tab-panel active">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Control room</p>
+              <h1>Meet Dashboard</h1>
+            </div>
+            <div class="heading-actions">
+              <a class="display-link" href="/scoreboard.html" target="_blank">Open Scoreboard</a>
+              <button id="refreshBtn" class="ghost-button">Refresh</button>
+            </div>
+          </div>
+
+          <section class="meet-hero">
+            <div>
+              <p class="eyebrow">Now managing</p>
+              <h2 id="heroMeet">Athletic Meet</h2>
+              <p id="heroVenueDate" class="hero-meta">Venue and date</p>
+            </div>
+            <div class="hero-status">
+              <span id="meetProgressLabel">0% scored</span>
+              <div class="progress-track"><div id="meetProgressBar" class="progress-bar"></div></div>
+              <strong id="leaderTeam">No leader yet</strong>
+            </div>
+          </section>
+
+          <div class="stat-grid">
+            <article>
+              <span>Athletes</span>
+              <strong id="statAthletes">0</strong>
+            </article>
+            <article>
+              <span>Events</span>
+              <strong id="statEvents">0</strong>
+            </article>
+            <article>
+              <span>Entries</span>
+              <strong id="statEntries">0</strong>
+            </article>
+            <article>
+              <span>Scored Events</span>
+              <strong id="statCompleted">0</strong>
+            </article>
+          </div>
+
+          <section class="panel event-strip">
+            <div class="panel-title">
+              <h2>Event Flow</h2>
+              <span id="nextEventName" class="soft-label">No upcoming event</span>
+            </div>
+            <div id="eventCards" class="event-cards"></div>
+          </section>
+
+          <div class="content-grid two">
+            <section class="panel">
+              <div class="panel-title">
+                <h2>Team Leaderboard</h2>
+              </div>
+              <div id="teamBars" class="team-bars"></div>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Team</th>
+                      <th>Points</th>
+                      <th>Gold</th>
+                      <th>Silver</th>
+                      <th>Bronze</th>
+                    </tr>
+                  </thead>
+                  <tbody id="leaderboardBody"></tbody>
+                </table>
+              </div>
+            </section>
+
+            <section class="panel">
+              <div class="panel-title">
+                <h2>Recent Results</h2>
+              </div>
+              <div id="recentResults" class="result-list"></div>
+            </section>
+          </div>
+        </section>
+
+        <section id="athletes" class="tab-panel">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Roster</p>
+              <h1>Athletes</h1>
+            </div>
+          </div>
+          <div class="content-grid">
+            <form id="athleteForm" class="panel form-panel">
+              <h2>Add Athlete</h2>
+              <label>Bib Number <input name="bib" required placeholder="301"></label>
+              <label>Name <input name="name" required placeholder="Player name"></label>
+              <label>Age <input type="number" name="age" min="5" max="99" placeholder="16"></label>
+              <label>Gender
+                <select name="gender">
+                  <option>Boys</option>
+                  <option>Girls</option>
+                  <option>Open</option>
+                </select>
+              </label>
+              <label>Team <input name="team" required placeholder="Red House"></label>
+              <button type="submit">Add Athlete</button>
+            </form>
+            <section class="panel">
+              <div class="panel-title">
+                <h2>Roster List</h2>
+                <input id="athleteSearch" class="search" placeholder="Search athlete, bib, team">
+              </div>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Bib</th>
+                      <th>Name</th>
+                      <th>Age</th>
+                      <th>Gender</th>
+                      <th>Team</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody id="athletesBody"></tbody>
+                </table>
+              </div>
+            </section>
+          </div>
+        </section>
+
+        <section id="events" class="tab-panel">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Programme</p>
+              <h1>Events</h1>
+            </div>
+          </div>
+          <div class="content-grid">
+            <form id="eventForm" class="panel form-panel">
+              <h2>Add Event</h2>
+              <label>Event Name
+                <select name="name" id="eventNameSelect" required></select>
+              </label>
+              <label>Category
+                <select name="category" id="eventCategorySelect"></select>
+              </label>
+              <label>Type
+                <select name="type" id="eventType">
+                  <option value="track">Track</option>
+                  <option value="field">Field</option>
+                </select>
+              </label>
+              <label>Unit <input name="unit" id="eventUnit" value="seconds"></label>
+              <label class="check-row">
+                <input type="checkbox" name="lowerIsBetter" checked>
+                Lower mark wins
+              </label>
+              <button type="submit">Add Event</button>
+            </form>
+            <section class="panel">
+              <div class="panel-title">
+                <h2>Event List</h2>
+              </div>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Event</th>
+                      <th>Category</th>
+                      <th>Type</th>
+                      <th>Winning Mark</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody id="eventsBody"></tbody>
+                </table>
+              </div>
+            </section>
+          </div>
+
+          <section class="panel entry-preview-panel">
+            <div class="panel-title">
+              <h2>Event Entries</h2>
+              <select id="eventEntryMenu"></select>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Bib</th>
+                    <th>AFI UID</th>
+                    <th>Athlete</th>
+                    <th>Category</th>
+                    <th>Gender</th>
+                    <th>Team / District</th>
+                  </tr>
+                </thead>
+                <tbody id="eventEntriesPreviewBody"></tbody>
+              </table>
+            </div>
+          </section>
+        </section>
+
+        <section id="entries" class="tab-panel">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Call room</p>
+              <h1>Entries</h1>
+            </div>
+          </div>
+          <div class="content-grid">
+            <form id="entryForm" class="panel form-panel">
+              <h2>Register Athlete</h2>
+              <label>Athlete <select name="athleteId" id="entryAthlete"></select></label>
+              <label>Event <select name="eventId" id="entryEvent"></select></label>
+              <button type="submit">Register</button>
+            </form>
+            <section class="panel">
+              <div class="panel-title">
+                <h2>Entry List</h2>
+              </div>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Bib</th>
+                      <th>Athlete</th>
+                      <th>Event</th>
+                      <th>Team</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody id="entriesBody"></tbody>
+                </table>
+              </div>
+            </section>
+          </div>
+        </section>
+
+        <section id="organizer" class="tab-panel">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Meet command</p>
+              <h1>Organizer</h1>
+            </div>
+            <div class="heading-actions">
+              <a class="display-link" href="/scoreboard.html" target="_blank">Live Display</a>
+            </div>
+          </div>
+
+          <div class="organizer-grid">
+            <section class="panel organizer-event-panel">
+              <div class="panel-title">
+                <h2>Organize Event</h2>
+                <select id="organizerEvent"></select>
+              </div>
+              <div class="organizer-event-card">
+                <span id="organizerStatus" class="status-chip">Open</span>
+                <h2 id="organizerEventTitle">Select event</h2>
+                <p id="organizerEventMeta">Category, type, and unit</p>
+                <div class="organizer-stats">
+                  <article>
+                    <span>Entries</span>
+                    <strong id="organizerEntriesCount">0</strong>
+                  </article>
+                  <article>
+                    <span>Results</span>
+                    <strong id="organizerResultsCount">0</strong>
+                  </article>
+                  <article>
+                    <span>Remaining</span>
+                    <strong id="organizerRemainingCount">0</strong>
+                  </article>
+                </div>
+              </div>
+            </section>
+
+            <section class="panel quick-result-panel">
+              <div class="panel-title">
+                <h2>Quick Result Entry</h2>
+              </div>
+              <form id="organizerResultForm" class="quick-result-form">
+                <label>Athlete <select name="athleteId" id="organizerAthlete"></select></label>
+                <label>Mark <input type="number" step="0.001" name="mark" required placeholder="12.45"></label>
+                <label>Note <input name="note" placeholder="Record, DQ, wind"></label>
+                <button type="submit">Save Result</button>
+              </form>
+            </section>
+          </div>
+
+          <div class="content-grid two organizer-lists">
+            <section class="panel">
+              <div class="panel-title">
+                <h2>Call List</h2>
+                <span class="soft-label">Registered athletes</span>
+              </div>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Order</th>
+                      <th>Bib</th>
+                      <th>Athlete</th>
+                      <th>Team</th>
+                      <th>Result</th>
+                    </tr>
+                  </thead>
+                  <tbody id="organizerEntriesBody"></tbody>
+                </table>
+              </div>
+            </section>
+
+            <section class="panel">
+              <div class="panel-title">
+                <h2>Current Rankings</h2>
+                <span class="soft-label">Auto scored</span>
+              </div>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Rank</th>
+                      <th>Bib</th>
+                      <th>Athlete</th>
+                      <th>Mark</th>
+                      <th>Points</th>
+                    </tr>
+                  </thead>
+                  <tbody id="organizerRankingsBody"></tbody>
+                </table>
+              </div>
+            </section>
+          </div>
+        </section>
+
+        <section id="results" class="tab-panel">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Finish line</p>
+              <h1>Results</h1>
+            </div>
+          </div>
+          <div class="content-grid">
+            <form id="resultForm" class="panel form-panel">
+              <h2>Enter Result</h2>
+              <label>Event <select name="eventId" id="resultEvent"></select></label>
+              <label>Athlete <select name="athleteId" id="resultAthlete"></select></label>
+              <label>Mark <input type="number" step="0.001" name="mark" required placeholder="12.45"></label>
+              <label>Note <input name="note" placeholder="Record, DQ note, wind"></label>
+              <button type="submit">Save Result</button>
+            </form>
+            <section class="panel">
+              <div class="panel-title">
+                <h2>Event Rankings</h2>
+                <select id="rankingEvent"></select>
+              </div>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Rank</th>
+                      <th>Bib</th>
+                      <th>Athlete</th>
+                      <th>Team</th>
+                      <th>Mark</th>
+                      <th>Points</th>
+                    </tr>
+                  </thead>
+                  <tbody id="rankingsBody"></tbody>
+                </table>
+              </div>
+            </section>
+          </div>
+        </section>
+
+        <section id="reference" class="tab-panel">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Reference files</p>
+              <h1>CSV Import & Export</h1>
+            </div>
+          </div>
+          <div class="content-grid">
+            <section class="panel form-panel">
+              <h2>Import Athletes Template</h2>
+              <p class="helper-text">Use the AFI-style CSV with columns like Full Name, AFI UID, District, Category, Gender, Event 1, and Event 2.</p>
+              <label>CSV File <input type="file" id="athleteCsvFile" accept=".csv,text/csv"></label>
+              <button type="button" id="importCsvBtn">Import CSV</button>
+              <div id="importSummary" class="summary-box">No file imported yet.</div>
+            </section>
+
+            <section class="panel">
+              <div class="panel-title">
+                <h2>Results Reference Export</h2>
+                <button type="button" id="downloadResultsBtn">Download Results CSV</button>
+              </div>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Meet</th>
+                      <th>Event</th>
+                      <th>Position</th>
+                      <th>AFI UID / Bib</th>
+                      <th>Athlete</th>
+                      <th>Mark</th>
+                      <th>Medal</th>
+                    </tr>
+                  </thead>
+                  <tbody id="exportPreviewBody"></tbody>
+                </table>
+              </div>
+            </section>
+          </div>
+        </section>
+
+        <section id="reports" class="tab-panel">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Meet office</p>
+              <h1>Reports</h1>
+            </div>
+            <button type="button" id="reloadReportsBtn" class="ghost-button">Reload Reports</button>
+          </div>
+
+          <div class="report-actions">
+            <a class="display-link" href="/sample-report.html" target="_blank">Open Sample Report</a>
+            <button type="button" id="printScoreSheetsBtn">Print Score Sheets</button>
+            <button type="button" id="printResultSheetsBtn">Print Result Sheets</button>
+            <button type="button" id="downloadTeamSummaryBtn">Download Team Summary</button>
+            <button type="button" id="downloadParticipationBtn">Download Participation</button>
+          </div>
+
+          <div class="content-grid two">
+            <section class="panel">
+              <div class="panel-title">
+                <h2>Score Sheet Preview</h2>
+                <select id="scorePreviewEvent"></select>
+              </div>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Lane</th>
+                      <th>Bib</th>
+                      <th>Athlete</th>
+                      <th>Category</th>
+                      <th>Team</th>
+                      <th>Mark</th>
+                      <th>Position</th>
+                    </tr>
+                  </thead>
+                  <tbody id="scorePreviewBody"></tbody>
+                </table>
+              </div>
+            </section>
+
+            <section class="panel">
+              <div class="panel-title">
+                <h2>Result Sheet Preview</h2>
+                <select id="resultPreviewEvent"></select>
+              </div>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Pos</th>
+                      <th>Bib</th>
+                      <th>Athlete</th>
+                      <th>Mark</th>
+                      <th>Medal</th>
+                      <th>Points</th>
+                    </tr>
+                  </thead>
+                  <tbody id="resultPreviewBody"></tbody>
+                </table>
+              </div>
+            </section>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <script src="/app.js"></script>
+  </body>
+</html>
