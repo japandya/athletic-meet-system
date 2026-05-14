@@ -1,8 +1,7 @@
 const $ = selector => document.querySelector(selector);
 
 async function api(path) {
-  const apiBaseUrl = window.APP_CONFIG?.API_BASE_URL || "";
-  const response = await fetch(`${apiBaseUrl}/api${path}`);
+  const response = await fetch(`/api${path}`);
   const data = await response.json();
   if (!response.ok) throw new Error(data.error || "Request failed");
   return data;

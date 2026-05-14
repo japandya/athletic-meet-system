@@ -1,0 +1,357 @@
+:root {
+  color-scheme: dark;
+  --bg: #070b0a;
+  --panel: rgba(18, 26, 23, 0.92);
+  --panel-strong: #17231f;
+  --ink: #f3fbf7;
+  --muted: #9fb0aa;
+  --line: rgba(255, 255, 255, 0.1);
+  --primary: #38b891;
+  --accent: #f18a56;
+  --gold: #f2c14e;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 12% 0%, rgba(56, 184, 145, 0.22), transparent 360px),
+    radial-gradient(circle at 88% 8%, rgba(241, 138, 86, 0.18), transparent 340px),
+    linear-gradient(180deg, #101815, var(--bg));
+  color: var(--ink);
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.scoreboard {
+  width: min(1680px, 100%);
+  margin: 0 auto;
+  padding: 28px;
+}
+
+.score-header,
+.hero-score,
+.score-grid {
+  display: grid;
+  gap: 20px;
+}
+
+.score-header {
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 0.35fr);
+  align-items: end;
+  margin-bottom: 22px;
+}
+
+.eyebrow {
+  margin: 0 0 6px;
+  color: var(--accent);
+  font-size: 0.9rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+h1 {
+  font-size: clamp(2rem, 4vw, 4.6rem);
+  line-height: 0.98;
+}
+
+h2 {
+  font-size: clamp(2.4rem, 5vw, 5.5rem);
+  line-height: 0.95;
+}
+
+.score-header span,
+.hero-score p {
+  color: var(--muted);
+  font-size: 1.05rem;
+  font-weight: 800;
+}
+
+.score-controls {
+  display: grid;
+  grid-template-columns: 1fr 110px;
+  gap: 12px;
+  align-items: end;
+}
+
+label {
+  display: grid;
+  gap: 7px;
+  color: var(--muted);
+  font-size: 0.84rem;
+  font-weight: 900;
+}
+
+select,
+.back-link {
+  min-height: 48px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+  color: var(--ink);
+  padding: 0 13px;
+  font: inherit;
+}
+
+.back-link {
+  display: grid;
+  place-items: center;
+  color: var(--ink);
+  font-weight: 900;
+  text-decoration: none;
+}
+
+.hero-score {
+  grid-template-columns: minmax(0, 1fr) 150px;
+  align-items: center;
+  min-height: 210px;
+  margin-bottom: 22px;
+  padding: 28px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: linear-gradient(120deg, rgba(23, 107, 85, 0.96), rgba(10, 17, 16, 0.96));
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.38);
+}
+
+.live-pill {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  min-height: 56px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  font-weight: 1000;
+}
+
+.live-pill span {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: #ff4d4d;
+  box-shadow: 0 0 0 8px rgba(255, 77, 77, 0.16);
+}
+
+.score-grid {
+  grid-template-columns: minmax(0, 1.35fr) minmax(340px, 0.65fr);
+}
+
+.score-panel {
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--panel);
+  box-shadow: 0 20px 55px rgba(0, 0, 0, 0.28);
+}
+
+.panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 18px 22px;
+  border-bottom: 1px solid var(--line);
+}
+
+.panel-head h3 {
+  font-size: 1.25rem;
+}
+
+.panel-head span {
+  color: var(--muted);
+  font-weight: 800;
+}
+
+.podium {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  padding: 18px;
+}
+
+.podium-card {
+  display: grid;
+  gap: 8px;
+  min-height: 150px;
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--panel-strong);
+}
+
+.podium-card span {
+  display: grid;
+  width: 40px;
+  height: 40px;
+  place-items: center;
+  border-radius: 999px;
+  background: var(--primary);
+  color: #06110e;
+  font-size: 1.25rem;
+  font-weight: 1000;
+}
+
+.podium-card.rank-1 span {
+  background: var(--gold);
+}
+
+.podium-card strong {
+  font-size: clamp(1.2rem, 2vw, 1.8rem);
+}
+
+.podium-card small {
+  color: var(--muted);
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+.podium-card b {
+  color: var(--primary);
+  font-size: 1.1rem;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding: 16px 20px;
+  border-top: 1px solid var(--line);
+  text-align: left;
+  white-space: nowrap;
+}
+
+th {
+  color: var(--muted);
+  font-size: 0.82rem;
+  text-transform: uppercase;
+}
+
+td {
+  font-size: clamp(1rem, 1.4vw, 1.35rem);
+  font-weight: 800;
+}
+
+.rank {
+  display: inline-grid;
+  width: 36px;
+  height: 36px;
+  place-items: center;
+  border-radius: 999px;
+  background: var(--panel-strong);
+  color: var(--gold);
+}
+
+.dot {
+  display: inline-block;
+  width: 11px;
+  height: 11px;
+  margin-right: 9px;
+  border-radius: 999px;
+}
+
+.team-standings {
+  display: grid;
+  gap: 12px;
+  padding: 18px;
+}
+
+.team-row {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) 58px;
+  gap: 12px;
+  align-items: center;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--panel-strong);
+}
+
+.team-rank {
+  display: grid;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--gold);
+  font-weight: 1000;
+}
+
+.team-info strong {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 9px;
+}
+
+.team-info i {
+  width: 11px;
+  height: 11px;
+  border-radius: 999px;
+}
+
+.bar {
+  height: 9px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.bar span {
+  display: block;
+  height: 100%;
+}
+
+.team-row b {
+  color: var(--primary);
+  font-size: 1.35rem;
+}
+
+.empty {
+  padding: 24px;
+  color: var(--muted);
+  font-weight: 800;
+  text-align: center;
+}
+
+@media (max-width: 980px) {
+  .score-header,
+  .hero-score,
+  .score-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .podium {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 620px) {
+  .scoreboard {
+    padding: 16px;
+  }
+
+  .score-controls {
+    grid-template-columns: 1fr;
+  }
+
+  th,
+  td {
+    padding: 12px;
+  }
+}

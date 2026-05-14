@@ -5,7 +5,7 @@
   "description": "Athletic meet web client.",
   "scripts": {
     "dev": "vite --host 0.0.0.0",
-    "build": "vite build",
+    "build": "node scripts/build-static.js",
     "preview": "vite preview --host 0.0.0.0",
     "check": "node --check public/app.js && node --check public/scoreboard.js && node --check public/sample-report.js"
   },

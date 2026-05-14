@@ -4,6 +4,9 @@ const path = require("path");
 const crypto = require("crypto");
 
 const PORT = process.env.PORT || 5000;
+const ORGANIZER_USER = process.env.ORGANIZER_USER || "organizer";
+const ORGANIZER_PASSWORD = process.env.ORGANIZER_PASSWORD || "meetdesk2026";
+const ORGANIZER_SETUP_KEY = process.env.ORGANIZER_SETUP_KEY || "SETUP2026";
 const DATA_DIR = path.join(__dirname, "data");
 const DB_FILE = path.join(DATA_DIR, "meet-data.json");
 const PUBLIC_DIR = path.join(__dirname, "..", "web", "public");
@@ -57,6 +60,16 @@ function writeDb(data) {
   fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2));
 }
 
+function backupDb() {
+  ensureDb();
+  const backupDir = path.join(DATA_DIR, "backups");
+  if (!fs.existsSync(backupDir)) fs.mkdirSync(backupDir, { recursive: true });
+  const stamp = new Date().toISOString().replace(/[:.]/g, "-");
+  const backupFile = path.join(backupDir, `meet-data-${stamp}.json`);
+  fs.copyFileSync(DB_FILE, backupFile);
+  return backupFile;
+}
+
 function sendJson(res, status, payload) {
   const body = JSON.stringify(payload);
   res.writeHead(status, {
@@ -93,6 +106,30 @@ function readBody(req) {
 
 function id(prefix) {
   return `${prefix}_${crypto.randomBytes(5).toString("hex")}`;
+}
+
+function accessCode() {
+  return crypto.randomBytes(3).toString("hex").toUpperCase();
+}
+
+function hashSecret(value) {
+  return crypto.createHash("sha256").update(String(value)).digest("hex");
+}
+
+function ensureAuthStore(db) {
+  if (!db.auth) db.auth = {};
+  if (!Array.isArray(db.auth.organizers)) db.auth.organizers = [];
+  return db.auth;
+}
+
+function organizerMatches(db, username, password) {
+  if (username === ORGANIZER_USER && password === ORGANIZER_PASSWORD) return true;
+  const auth = ensureAuthStore(db);
+  const passwordHash = hashSecret(password);
+  return auth.organizers.some(user =>
+    normalizeText(user.username).toLowerCase() === username.toLowerCase() &&
+    user.passwordHash === passwordHash
+  );
 }
 
 function normalizeText(value) {
@@ -164,6 +201,41 @@ function ensureRegistration(db, athleteId, eventId) {
   return true;
 }
 
+function ensureAthleteCredentials(db) {
+  let generated = 0;
+  for (const athlete of db.athletes) {
+    if (!athlete.accessCode) {
+      athlete.accessCode = accessCode();
+      generated += 1;
+    }
+  }
+  return generated;
+}
+
+function athletePortalData(db, athlete) {
+  const entries = db.registrations
+    .filter(reg => reg.athleteId === athlete.id)
+    .map(reg => {
+      const event = db.events.find(item => item.id === reg.eventId);
+      const result = db.results.find(item => item.athleteId === athlete.id && item.eventId === reg.eventId);
+      const ranked = event ? rankResults(db, event.id).find(row => row.athlete.id === athlete.id) : null;
+      return {
+        event,
+        result,
+        rank: ranked?.rank || "",
+        points: ranked?.points || 0,
+        medal: ranked?.medal || ""
+      };
+    })
+    .filter(row => row.event);
+
+  return {
+    meet: db.meet,
+    athlete,
+    entries
+  };
+}
+
 function importAthleteRows(db, rows) {
   const summary = {
     importedAthletes: 0,
@@ -211,7 +283,7 @@ function importAthleteRows(db, rows) {
       Object.assign(athlete, athleteData);
       summary.updatedAthletes += 1;
     } else {
-      athlete = { id: id("ath"), ...athleteData };
+      athlete = { id: id("ath"), accessCode: accessCode(), ...athleteData };
       db.athletes.push(athlete);
       summary.importedAthletes += 1;
     }
@@ -456,6 +528,124 @@ async function handleApi(req, res) {
   if (req.method === "GET" && resource === "results-export") return sendJson(res, 200, resultsExportRows(db));
   if (req.method === "GET" && resource === "reports") return sendJson(res, 200, allReports(db));
 
+  if (req.method === "POST" && resource === "organizer-login") {
+    const body = await readBody(req);
+    const username = normalizeText(body.username);
+    const password = normalizeText(body.password);
+    if (organizerMatches(db, username, password)) {
+      return sendJson(res, 200, { role: "organizer", name: "Meet Organizer" });
+    }
+    return sendError(res, 401, "Invalid organizer credentials");
+  }
+
+  if (req.method === "POST" && resource === "organizer-register") {
+    const body = await readBody(req);
+    const setupKey = normalizeText(body.setupKey);
+    const username = normalizeText(body.username);
+    const password = normalizeText(body.password);
+    if (setupKey !== ORGANIZER_SETUP_KEY) return sendError(res, 401, "Invalid setup key");
+    if (username.length < 3) return sendError(res, 400, "Username must be at least 3 characters");
+    if (password.length < 6) return sendError(res, 400, "Password must be at least 6 characters");
+    const auth = ensureAuthStore(db);
+    if (auth.organizers.some(user => normalizeText(user.username).toLowerCase() === username.toLowerCase())) {
+      return sendError(res, 409, "Organizer username already exists");
+    }
+    auth.organizers.push({
+      id: id("org"),
+      username,
+      passwordHash: hashSecret(password),
+      createdAt: new Date().toISOString()
+    });
+    writeDb(db);
+    return sendJson(res, 201, { message: "Organizer credential registered", username });
+  }
+
+  if (req.method === "POST" && resource === "athlete-credentials") {
+    const generated = ensureAthleteCredentials(db);
+    writeDb(db);
+    return sendJson(res, 200, {
+      message: generated ? `Generated ${generated} athlete access codes` : "All athletes already have access codes",
+      generated,
+      credentials: db.athletes.map(athlete => ({
+        bib: athlete.bib,
+        afiUID: athlete.afiUid || "",
+        name: athlete.name,
+        team: athlete.team,
+        accessCode: athlete.accessCode
+      }))
+    });
+  }
+
+  if (req.method === "POST" && resource === "athlete-login") {
+    const body = await readBody(req);
+    const loginId = normalizeText(body.loginId).toLowerCase();
+    const code = normalizeText(body.accessCode).toUpperCase();
+    if (!loginId || !code) return sendError(res, 400, "Bib or AFI UID and access code are required");
+    const athlete = db.athletes.find(item =>
+      [item.bib, item.afiUid].filter(Boolean).some(value => normalizeText(value).toLowerCase() === loginId) &&
+      normalizeText(item.accessCode).toUpperCase() === code
+    );
+    if (!athlete) return sendError(res, 401, "Invalid athlete credentials");
+    return sendJson(res, 200, athletePortalData(db, athlete));
+  }
+
+  if (req.method === "POST" && resource === "athlete-register") {
+    const body = await readBody(req);
+    const loginId = normalizeText(body.loginId).toLowerCase();
+    const mobile = normalizeText(body.mobile);
+    if (!loginId) return sendError(res, 400, "Bib or AFI UID is required");
+    const athlete = db.athletes.find(item =>
+      [item.bib, item.afiUid].filter(Boolean).some(value => normalizeText(value).toLowerCase() === loginId)
+    );
+    if (!athlete) return sendError(res, 404, "Athlete not found");
+    if (mobile && athlete.mobile && normalizeText(athlete.mobile) !== mobile) {
+      return sendError(res, 401, "Mobile number does not match athlete record");
+    }
+    if (!athlete.accessCode) athlete.accessCode = accessCode();
+    writeDb(db);
+    return sendJson(res, 200, {
+      message: "Athlete credential is ready",
+      credential: {
+        bib: athlete.bib,
+        afiUID: athlete.afiUid || "",
+        name: athlete.name,
+        team: athlete.team,
+        accessCode: athlete.accessCode
+      }
+    });
+  }
+
+  if (req.method === "POST" && resource === "clear-data") {
+    const body = await readBody(req);
+    if (body.confirm !== "CLEAR") return sendError(res, 400, "Type CLEAR to confirm data reset");
+    const backupFile = backupDb();
+    const before = {
+      meet: db.meet,
+      athletes: db.athletes.length,
+      events: db.events.length,
+      registrations: db.registrations.length,
+      results: db.results.length
+    };
+    db.meet = { name: "", venue: "", date: "" };
+    db.athletes = [];
+    db.events = [];
+    db.registrations = [];
+    db.results = [];
+    writeDb(db);
+    return sendJson(res, 200, {
+      message: "Meet data cleared and saved to database",
+      backupFile,
+      before,
+      after: {
+        meet: db.meet,
+        athletes: 0,
+        events: 0,
+        registrations: 0,
+        results: 0
+      }
+    });
+  }
+
   if (req.method === "POST" && resource === "import-athletes") {
     const body = await readBody(req);
     if (!Array.isArray(body.rows)) return sendError(res, 400, "rows array is required");
@@ -516,6 +706,7 @@ async function handleApi(req, res) {
       }
       item = {
         id: id("ath"),
+        accessCode: accessCode(),
         bib,
         name,
         age: parseNumber(body.age) || "",

@@ -38,8 +38,7 @@ function applyTheme(theme) {
 }
 
 async function api(path, options = {}) {
-  const apiBaseUrl = window.APP_CONFIG?.API_BASE_URL || "";
-  const response = await fetch(`${apiBaseUrl}/api${path}`, {
+  const response = await fetch(`/api${path}`, {
     headers: { "Content-Type": "application/json" },
     ...options
   });

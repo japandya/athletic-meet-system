@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: athletic-meet-system
+    env: node
+    rootDir: apps/api
+    buildCommand: npm install
+    startCommand: npm start
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 5000
+      - key: ORGANIZER_USER
+        sync: false
+      - key: ORGANIZER_PASSWORD
+        sync: false
+      - key: ORGANIZER_SETUP_KEY
+        sync: false

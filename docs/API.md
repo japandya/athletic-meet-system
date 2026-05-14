@@ -47,3 +47,17 @@ Expected body:
   "rows": []
 }
 ```
+
+## Data Maintenance
+
+- `POST /api/clear-data`
+
+Clears athletes, events, registrations, and results, then saves the empty meet state to the database file. The meet profile is kept.
+
+Expected body:
+
+```json
+{
+  "confirm": "CLEAR"
+}
+```

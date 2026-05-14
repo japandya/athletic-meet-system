@@ -1,0 +1,264 @@
+:root {
+  color-scheme: light;
+  --ink: #17201c;
+  --muted: #5f6b66;
+  --line: #d8dfdb;
+  --paper: #ffffff;
+  --bg: #eef2ef;
+  --primary: #176b55;
+  --accent: #c9512b;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.report-book {
+  width: min(1180px, calc(100% - 32px));
+  margin: 24px auto;
+}
+
+.report-cover,
+.report-section,
+.summary-grid article {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--paper);
+  box-shadow: 0 14px 35px rgba(26, 36, 32, 0.08);
+}
+
+.report-cover {
+  display: grid;
+  gap: 10px;
+  padding: 30px;
+  margin-bottom: 16px;
+  color: #fff;
+  background: linear-gradient(120deg, #176b55, #17201c);
+}
+
+.report-cover p,
+.section-title p {
+  margin: 0;
+  color: var(--accent);
+  font-size: 0.78rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.report-cover h1 {
+  margin: 0;
+  font-size: clamp(2rem, 4vw, 4rem);
+  line-height: 1;
+}
+
+.report-cover span {
+  color: #dce7e2;
+  font-weight: 700;
+}
+
+.cover-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+button,
+.cover-actions a {
+  display: grid;
+  min-height: 42px;
+  place-items: center;
+  border: 0;
+  border-radius: 6px;
+  background: #f2c14e;
+  color: #17201c;
+  padding: 0 14px;
+  font: inherit;
+  font-weight: 800;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.summary-grid article {
+  padding: 18px;
+}
+
+.summary-grid span {
+  display: block;
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.summary-grid strong {
+  display: block;
+  margin-top: 9px;
+  font-size: 2rem;
+}
+
+.report-section {
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+
+.section-title {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 18px;
+  border-bottom: 1px solid var(--line);
+}
+
+.section-title h2 {
+  margin: 4px 0 0;
+  font-size: 1.3rem;
+}
+
+.section-title span {
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.official-head {
+  display: grid;
+  gap: 8px;
+  padding: 18px;
+  text-align: center;
+}
+
+.official-head strong {
+  font-size: 1rem;
+  letter-spacing: 0.02em;
+}
+
+.official-head b {
+  font-size: 1.45rem;
+}
+
+.official-head div {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 6px;
+  text-align: left;
+  font-weight: 700;
+}
+
+.official-head em {
+  justify-self: start;
+  color: var(--muted);
+  font-style: normal;
+  font-weight: 700;
+}
+
+.final-title {
+  margin: 18px 0 0;
+  text-align: center;
+  font-size: 1rem;
+}
+
+.match-report {
+  padding: 18px;
+  line-height: 1.55;
+}
+
+.match-report h3 {
+  margin: 0 0 8px;
+}
+
+.match-report p {
+  margin: 0 0 8px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+  vertical-align: top;
+}
+
+th {
+  color: var(--muted);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+}
+
+td {
+  font-size: 0.92rem;
+}
+
+.empty {
+  color: var(--muted);
+  text-align: center;
+}
+
+.signature-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 22px;
+  padding: 34px 18px 18px;
+}
+
+.signature-row span {
+  border-top: 1px solid var(--ink);
+  padding-top: 7px;
+  text-align: center;
+  font-size: 0.86rem;
+  font-weight: 700;
+}
+
+@media print {
+  body {
+    background: #fff;
+  }
+
+  .report-book {
+    width: 100%;
+    margin: 0;
+  }
+
+  .report-cover,
+  .report-section,
+  .summary-grid article {
+    box-shadow: none;
+  }
+
+  .cover-actions {
+    display: none;
+  }
+
+  .report-section {
+    break-inside: avoid;
+  }
+}
+
+@media (max-width: 760px) {
+  .summary-grid,
+  .signature-row {
+    grid-template-columns: 1fr;
+  }
+
+  .section-title {
+    flex-direction: column;
+  }
+}
