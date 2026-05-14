@@ -21,6 +21,16 @@ npm run dev
 
 The API serves the current meet desk at `http://localhost:5000` and API routes under `/api`.
 
+Default local organizer credentials:
+
+```text
+Username: organizer
+Password: meetdesk2026
+Setup key for registering new organizers: SETUP2026
+```
+
+Set `ORGANIZER_USER`, `ORGANIZER_PASSWORD`, and `ORGANIZER_SETUP_KEY` in production.
+
 ## Current Product Baseline
 
 - Meet setup
